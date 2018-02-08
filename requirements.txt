@@ -1,0 +1,3 @@
+-e git+git@github.com:ReactorHome/netdisco.git@9f8075333aa9dcdda0e45c4b199ba460cd80f09e#egg=netdisco
+paho-mqtt
+netifaces
