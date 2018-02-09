@@ -5,6 +5,7 @@ import netifaces
 
 
 class MqttClient:
+    hardware_id = netifaces.ifaddresses('en0')[netifaces.AF_LINK][0]["addr"]
 
     def __init__(self):
         self.client = mqtt.Client(transport="tcp")
@@ -25,6 +26,7 @@ class MqttClient:
         self.client.loop_forever()
 
     def disconnect(self):
+        self.client.publish("cloud_messaging", "{\"type\":\"disconnection\",\"hardware_id\": \"" + MqttClient.hardware_id + "\"}")
         self.client.disconnect()
 
     # The callback for when the client receives a CONNACK response from the server.
@@ -35,12 +37,10 @@ class MqttClient:
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         client.subscribe("$SYS/#")
-        client.subscribe("hub1")
-        hardware_id = netifaces.ifaddresses('en0')[netifaces.AF_LINK][0]["addr"]
-        client.publish("hub_connected", "{\"hardware_id\": \""+hardware_id+"\"}")
-        client.will_set("hub_disconnected", "{\"hardware_id\": \""+hardware_id+"\"}")
+        client.subscribe(MqttClient.hardware_id)
+        client.publish("cloud_messaging", "{\"type\":\"connection\",\"hardware_id\": \"" + MqttClient.hardware_id+  "\"}")
+        client.will_set("cloud_messaging", "{\"type\":\"disconnection\",\"hardware_id\": \"" + MqttClient.hardware_id + "\"}")
 
     # The callback for when a PUBLISH message is received from the server.
-    @staticmethod
-    def on_message(client: mqtt.Client, userdata, msg):
+    def on_message(self, client: mqtt.Client, userdata, msg):
         print(msg.topic + " " + msg.payload.decode("utf-8"))
