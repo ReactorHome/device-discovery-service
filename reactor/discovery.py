@@ -4,7 +4,7 @@ from pyHS100 import Discover
 import paho.mqtt.client as mqtt
 import json
 
-from reactor import MqttClient
+from reactor.mqtt_client import MqttClient
 
 
 class DeviceDiscovery(Thread):
@@ -29,7 +29,6 @@ class DeviceDiscovery(Thread):
             new_devices = set()
             found_devices = netdis.discover()
             devices = [a for a in found_devices if a in filter_set]
-            #print(devices)
 
             for dev in devices:
                 devInfo = netdis.get_info(dev)
@@ -38,7 +37,7 @@ class DeviceDiscovery(Thread):
             netdis.stop()
 
             for device in Discover.discover().values():
-                new_devices.add(("tp-link", device.mac, device.ip_address()))
+                new_devices.add(("tp-link", device.mac, device.ip_address))
 
             print("new devices")
             new_connections = new_devices.difference(self.old_devices)
@@ -50,9 +49,8 @@ class DeviceDiscovery(Thread):
             print(disconnections)
             self.old_devices = new_devices.copy()
 
-            message_body = json.dumps({"type": "device_connection", "hardware_id": MqttClient.hardware_id,"connections": list(new_connections), "disconnections": list(disconnections)})
-            self.mqtt_client.publish("cloud_messaging", message_body)
+            if len(new_connections) > 0 or len(disconnections) > 0:
+                message_body = json.dumps({"type": "device_connection", "hardware_id": MqttClient.hardware_id,"connections": list(new_connections), "disconnections": list(disconnections)})
+                self.mqtt_client.publish("cloud_messaging", message_body)
 
-            # for dev in netdis.discover():
-            #     print(dev)
 
