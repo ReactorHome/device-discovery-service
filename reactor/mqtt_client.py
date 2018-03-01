@@ -4,13 +4,14 @@ import paho.mqtt.client as mqtt
 import netifaces
 import json
 
-from reactor import TPLinkService, DeviceDiscovery
+from reactor import TPLinkService
+#from reactor.discovery import DeviceDiscovery
 
 
 class MqttClient:
     hardware_id = netifaces.ifaddresses('en0')[netifaces.AF_LINK][0]["addr"]
 
-    def __init__(self, discover: DeviceDiscovery):
+    def __init__(self):
         self.client = mqtt.Client(transport="tcp")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
@@ -23,6 +24,9 @@ class MqttClient:
         self.message_handlers = {
             'tp-link': TPLinkService.handle
         }
+        self.discover = None
+
+    def set_discover(self, discover):
         self.discover = discover
 
     def get_client(self):
