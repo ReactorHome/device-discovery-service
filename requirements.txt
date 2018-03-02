@@ -1,5 +1,5 @@
 -e git+git@github.com:ReactorHome/netdisco.git@9f8075333aa9dcdda0e45c4b199ba460cd80f09e#egg=netdisco
--e git+git@github.com:ReactorHome/HueApi.git@94ffa804bda42f980b79ebb89fe7a05e9c242342#egg=hue-api
 paho-mqtt
 netifaces
 pyHS100
+-e git+git@github.com:ReactorHome/HueApi.git@fb00bc706229b140522cb6cc5160b39441fb7cf8#egg=hue-api
