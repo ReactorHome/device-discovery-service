@@ -9,7 +9,7 @@ if __name__ == '__main__':
     device_discovery_thread.start()
     try:
         mqtt_client.start()
-    except Exception as e:
+    except (KeyboardInterrupt, Exception) as e:
         mqtt_client.disconnect()
-        print("client disconnected")
-    device_discovery_thread.stop_thread()
+        device_discovery_thread.stop_thread()
+

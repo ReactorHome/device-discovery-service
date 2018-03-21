@@ -3,13 +3,20 @@ import ssl
 import paho.mqtt.client as mqtt
 import netifaces
 import json
+import platform
 
 from reactor import TPLinkService
 #from reactor.discovery import DeviceDiscovery
 
 
+if platform.system() == "Darwin":
+    addr = "en0"
+else:
+    addr = "eth0"
+
+
 class MqttClient:
-    hardware_id = netifaces.ifaddresses('en0')[netifaces.AF_LINK][0]["addr"]
+    hardware_id = netifaces.ifaddresses(addr)[netifaces.AF_LINK][0]["addr"]
 
     def __init__(self):
         self.client = mqtt.Client(transport="tcp")

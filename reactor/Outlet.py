@@ -8,8 +8,8 @@ class Outlet:
         self.name = hw_info["dev_name"]
         self.manufacturer = "TP-Link"
         self.connection_address = connection_address
-        self.model = ""
-        self.on = hw_info["on"]
+        self.model = hw_info["model"]
+        self.on = True if hw_info["relay_state"] == 1 else False
 
     def __hash__(self):
         return hash(self.connected) ^ \

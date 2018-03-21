@@ -4,7 +4,7 @@ import json
 import os
 from pathlib import Path
 
-from reactor.hue.HueApiClient import HueApiClient
+from reactor_hue.hue.HueApiClient import HueApiClient
 
 
 class HueService:

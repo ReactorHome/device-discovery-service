@@ -4,6 +4,9 @@ import json
 from pyHS100 import SmartPlug
 
 
+logging.basicConfig(level=logging.INFO)
+
+
 class TPLinkService:
     def __init__(self):
         self._logger = logging.getLogger("TPLinkService")
