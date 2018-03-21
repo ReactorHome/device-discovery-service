@@ -87,7 +87,7 @@ class DeviceDiscovery(Thread):
                 #                            "hardware_id": MqttClient.hardware_id,
                 #                            "connections": [ob.__dict__ for ob in list(new_connections)],
                 #                            "disconnections": [ob.__dict__ for ob in list(disconnections)]})
-                message_body = json.dumps({"type": "device_connection",
+                message_body = json.dumps({"type": "state_change",
                                            "hardware_id": MqttClient.hardware_id,
                                            "state_change_list": [ob.__dict__ for ob in list(new_connections)]})
                 self.mqtt_client.publish("cloud_messaging", message_body)
