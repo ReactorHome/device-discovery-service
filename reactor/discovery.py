@@ -76,16 +76,20 @@ class DeviceDiscovery(Thread):
 
             for dev in disconnections:
                 dev.connected = False
+                new_connections.add(dev)
 
             self._logger.info("Disconnected devices: %s" % json.dumps([ob.__dict__ for ob in list(disconnections)]))
             self.old_devices = found_devices.copy()
             self.dev_dict = _dev_dict.copy()
 
             if len(new_connections) > 0 or len(disconnections) > 0:
+                # message_body = json.dumps({"type": "device_connection",
+                #                            "hardware_id": MqttClient.hardware_id,
+                #                            "connections": [ob.__dict__ for ob in list(new_connections)],
+                #                            "disconnections": [ob.__dict__ for ob in list(disconnections)]})
                 message_body = json.dumps({"type": "device_connection",
                                            "hardware_id": MqttClient.hardware_id,
-                                           "connections": [ob.__dict__ for ob in list(new_connections)],
-                                           "disconnections": [ob.__dict__ for ob in list(disconnections)]})
+                                           "state_change_list": [ob.__dict__ for ob in list(new_connections)]})
                 self.mqtt_client.publish("cloud_messaging", message_body)
 
             self._stop_event.wait(30)
