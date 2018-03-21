@@ -86,6 +86,6 @@ class DeviceDiscovery(Thread):
                                            "hardware_id": MqttClient.hardware_id,
                                            "connections": [ob.__dict__ for ob in list(new_connections)],
                                            "disconnections": [ob.__dict__ for ob in list(disconnections)]})
-                #self.mqtt_client.publish("cloud_messaging", message_body)
+                self.mqtt_client.publish("cloud_messaging", message_body)
 
             self._stop_event.wait(30)
