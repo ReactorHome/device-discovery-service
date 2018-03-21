@@ -1,10 +1,10 @@
 from setuptools import setup
 
 setup(
-    name='hue-api',
+    name='reactor-hub',
     version='1.0.0',
     packages=['reactor'],
-    package_dir={'': ''},
+    package_dir={'': './'},
     url='',
     license='',
     author='Reactor',
