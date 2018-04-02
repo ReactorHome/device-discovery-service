@@ -54,18 +54,18 @@ class DeviceDiscovery(Thread):
             for device in Discover.discover().values():
                 #self._logger.info(json.dumps(device.get_sysinfo()))
                 # found_devices.add(Outlet(device.get_sysinfo(), True, device.ip_address))
-                if "tp-link" not in _dev_dict:
-                    _dev_dict["tp-link"] = dict()
-                _dev_dict["tp-link"][device.mac] = device.ip_address
+                if 0 not in _dev_dict:
+                    _dev_dict[0] = dict()
+                _dev_dict[0][device.mac] = device.ip_address
 
-            if "philips_hue" in _dev_dict:
-                for serial, host in _dev_dict["philips_hue"].items():
+            if 1 in _dev_dict:
+                for serial, host in _dev_dict[1].items():
                     if self.hue_service.bridge_registered(serial):
                         lights = self.hue_service.get_lights(serial, "http://"+host)
                         found_devices |= set(lights)
 
-            if "tp-link" in _dev_dict:
-                for serial, host in _dev_dict["tp-link"].items():
+            if 0 in _dev_dict:
+                for serial, host in _dev_dict[0].items():
                     outlet = SmartPlug(host)
                     found_devices.add(Outlet(outlet.get_sysinfo(), True, outlet.ip_address))
 

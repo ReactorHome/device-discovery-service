@@ -4,6 +4,7 @@ import paho.mqtt.client as mqtt
 import netifaces
 import json
 import platform
+import logging
 
 from reactor import TPLinkService
 #from reactor.discovery import DeviceDiscovery
@@ -29,9 +30,10 @@ class MqttClient:
                             tls_version=ssl.PROTOCOL_TLS,
                             ciphers=None)
         self.message_handlers = {
-            'tp-link': TPLinkService.handle
+            0: TPLinkService.handle
         }
         self.discover = None
+        self._logger = logging.getLogger("MqttClient")
 
     def set_discover(self, discover):
         self.discover = discover
@@ -71,14 +73,15 @@ class MqttClient:
     def on_message(self, client: mqtt.Client, userdata, msg):
         message = msg.payload.decode("uft-8")
         json_dict = json.loads(message)
+        self._logger.info(message)
         device_address = self.get_device_address(json_dict)
         if device_address is not None:
-            self.message_handlers[json_dict['type']](device_address, json_dict)
-        print(msg.topic + " " + msg.payload.decode("utf-8"))
+            self.message_handlers[json_dict['type']](device_address, json_dict['device'])
+        #print(msg.topic + " " + msg.payload.decode("utf-8"))
 
     def get_device_address(self, json_message):
         if json_message['type'] in self.discover.dev_dict and \
-                json_message['hardware_id'] in self.discover.dev_dict[json_message['type']]:
+                json_message['device']['hardware_id'] in self.discover.dev_dict[json_message['type']]:
             return self.discover.dev_dict[json_message['type']][json_message['hardware_id']]
 
         return None
