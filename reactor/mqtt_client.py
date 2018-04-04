@@ -18,6 +18,7 @@ else:
 
 class MqttClient:
     hardware_id = netifaces.ifaddresses(addr)[netifaces.AF_LINK][0]["addr"]
+    #hardware_id = "b8:27:eb:a7:c2:3e"
 
     def __init__(self):
         self.client = mqtt.Client(transport="tcp")
@@ -30,7 +31,7 @@ class MqttClient:
                             tls_version=ssl.PROTOCOL_TLS,
                             ciphers=None)
         self.message_handlers = {
-            0: TPLinkService.handle
+            0: TPLinkService().handle
         }
         self.discover = None
         self._logger = logging.getLogger("MqttClient")
@@ -72,7 +73,7 @@ class MqttClient:
     # The callback for when a PUBLISH message is received from the server.
     def on_message(self, client: mqtt.Client, userdata, msg):
         self._logger.info("Received message")
-        message = msg.payload.decode("uft-8")
+        message = msg.payload.decode("utf-8")
         self._logger.info("Message: " + message)
         json_dict = json.loads(message)
         self._logger.info(message)
@@ -85,6 +86,6 @@ class MqttClient:
     def get_device_address(self, json_message):
         if json_message['type'] in self.discover.dev_dict and \
                 json_message['device']['hardware_id'] in self.discover.dev_dict[json_message['type']]:
-            return self.discover.dev_dict[json_message['type']][json_message['hardware_id']]
+            return self.discover.dev_dict[json_message['type']][json_message['device']['hardware_id']]
 
         return None
