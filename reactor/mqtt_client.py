@@ -71,6 +71,7 @@ class MqttClient:
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(self, client: mqtt.Client, userdata, msg):
+        self._logger.info("Received message")
         message = msg.payload.decode("uft-8")
         json_dict = json.loads(message)
         self._logger.info(message)
