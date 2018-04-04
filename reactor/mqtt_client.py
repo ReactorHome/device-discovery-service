@@ -73,6 +73,7 @@ class MqttClient:
     def on_message(self, client: mqtt.Client, userdata, msg):
         self._logger.info("Received message")
         message = msg.payload.decode("uft-8")
+        self._logger.info("Message: " + message)
         json_dict = json.loads(message)
         self._logger.info(message)
         device_address = self.get_device_address(json_dict)
