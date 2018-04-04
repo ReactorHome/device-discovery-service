@@ -5,7 +5,7 @@ class Outlet:
         self.type = 1
         self.hardware_id = hw_info["mac"]
         self.connected = connected
-        self.name = hw_info["dev_name"]
+        self.name = hw_info["alias"]
         self.manufacturer = "TP-Link"
         self.connection_address = connection_address
         self.model = hw_info["model"]
