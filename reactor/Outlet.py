@@ -16,10 +16,8 @@ class Outlet:
                hash(self.manufacturer) ^ \
                hash(self.model) ^ \
                hash(self.hardware_id) ^ \
-               hash(self.name) ^ \
-               hash(self.on) ^ \
-               hash((self.connected, self.model, self.manufacturer, self.hardware_id, self.name, self.on))
+               hash((self.connected, self.model, self.manufacturer, self.hardware_id))
 
     def __eq__(self, other):
-        return (self.connected, self.model, self.manufacturer, self.hardware_id, self.name, self.on) == \
-            (other.connected, other.model, other.manufacturer, other.hardware_id, other.name, other.on)
+        return (self.connected, self.model, self.manufacturer, self.hardware_id) == \
+            (other.connected, other.model, other.manufacturer, other.hardware_id)
