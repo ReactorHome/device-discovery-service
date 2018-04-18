@@ -29,7 +29,7 @@ class HueService:
     def register_bridge(self, bridge_ip, json_message):
         self._logger.info("Registering hubs")
         api_client = HueApiClient(bridge_ip, "reactor-home", None)
-        if self.bridges is not None and json_message["hardware_id"] not in self.bridges:
+        if self.bridges is None or json_message["hardware_id"] not in self.bridges:
             response, code = api_client.register()
             self._logger.info(response)
             if code:
