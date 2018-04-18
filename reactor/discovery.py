@@ -101,7 +101,7 @@ class DeviceDiscovery(Thread):
                 message_body = json.dumps({"type": "state_change",
                                            "hardware_id": MqttClient.hardware_id,
                                            "state_change_list": [ob.__dict__ for ob in list(new_connections)]})
-                #self.mqtt_client.publish("cloud_messaging", message_body)
+                self.mqtt_client.publish("cloud_messaging", message_body)
 
             new_bridges = _new_hue_bridges.difference(self.new_hue_bridges)
             self.new_hue_bridges = _new_hue_bridges
@@ -113,6 +113,6 @@ class DeviceDiscovery(Thread):
                     "hardware_id": MqttClient.hardware_id,
                     "data": [ob.__dict__ for ob in list(new_bridges)]
                 })
-                #self.mqtt_client.publish("cloud_messaging", message_body)
+                self.mqtt_client.publish("cloud_messaging", message_body)
 
             self._stop_event.wait(5)
