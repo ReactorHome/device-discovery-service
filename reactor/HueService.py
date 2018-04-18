@@ -2,6 +2,7 @@ import logging
 import json
 
 import os
+import getpass
 from pathlib import Path
 
 from reactor_hue.hue.HueApiClient import HueApiClient
@@ -12,7 +13,7 @@ class HueService:
         self.home = str(Path.home())
         self._logger = logging.getLogger("HueService")
         self._logger.info(self.home)
-        self._logger.info(os.getlogin())
+        self._logger.info(getpass.getuser())
         self.bridges = None
         self._read_json_bridge_file()
         self.keys_to_remove = ["id", "type", "hardware_id", "connected", "name", "manufacturer", "connection_address", "model", "supports_color", "internal_id"]
