@@ -19,14 +19,15 @@ class HueService:
         self._logger.debug(json_message)
         api_client = HueApiClient(bridge_ip, "reactor-home", None)
 
-    def register_bridge(self, serial, bridge_ip):
+    def register_bridge(self, bridge_ip, json_message):
         self._logger.info("Registering hubs")
         api_client = HueApiClient(bridge_ip, "reactor-home", None)
         response, code = api_client.register()
         if code:
             if self.bridges is None:
                 self.bridges = dict()
-            self.bridges["serial"] = response
+            self.bridges[json_message["hardware_id"]] = response
+            self._write_json_bridge_file()
         return code
 
     def _read_json_bridge_file(self):

@@ -8,7 +8,7 @@ import logging
 
 from reactor import TPLinkService
 #from reactor.discovery import DeviceDiscovery
-
+from reactor.HueService import HueService
 
 if platform.system() == "Darwin":
     addr = "en0"
@@ -17,10 +17,10 @@ else:
 
 
 class MqttClient:
-    hardware_id = netifaces.ifaddresses(addr)[netifaces.AF_LINK][0]["addr"]
-    #hardware_id = "b8:27:eb:a7:c2:3e"
+    #hardware_id = netifaces.ifaddresses(addr)[netifaces.AF_LINK][0]["addr"]
+    hardware_id = "b8:27:eb:a7:c2:3e"
 
-    def __init__(self):
+    def __init__(self, hs):
         self.client = mqtt.Client(transport="tcp")
         self.client.on_connect = self.on_connect
         self.client.on_message = self.on_message
@@ -31,7 +31,9 @@ class MqttClient:
                             tls_version=ssl.PROTOCOL_TLS,
                             ciphers=None)
         self.message_handlers = {
-            0: TPLinkService().handle
+            0: TPLinkService().handle,
+            1: hs.register_bridge,
+            2: hs.handle
         }
         self.discover = None
         self._logger = logging.getLogger("MqttClient")
@@ -76,12 +78,16 @@ class MqttClient:
         message = msg.payload.decode("utf-8")
         self._logger.info("Message: " + message)
         json_dict = json.loads(message)
-        self._logger.info(message)
+        #self._logger.info(message)
+        # if "message_type" in json_dict:
+        #     if json_dict["message_type"] == "register-bridge":
+        #         self.message_handlers[1]("", json_dict["host"])
+        # else:
         device_address = self.get_device_address(json_dict)
         self._logger.info("Device Address: " + device_address)
         if device_address is not None:
             self.message_handlers[json_dict['type']](device_address, json_dict['device'])
-        #print(msg.topic + " " + msg.payload.decode("utf-8"))
+            #print(msg.topic + " " + msg.payload.decode("utf-8"))
 
     def get_device_address(self, json_message):
         if json_message['type'] in self.discover.dev_dict and \
