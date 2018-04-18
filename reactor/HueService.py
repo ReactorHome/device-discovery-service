@@ -29,13 +29,16 @@ class HueService:
     def register_bridge(self, bridge_ip, json_message):
         self._logger.info("Registering hubs")
         api_client = HueApiClient(bridge_ip, "reactor-home", None)
-        response, code = api_client.register()
-        if code:
-            if self.bridges is None:
-                self.bridges = dict()
-            self.bridges[json_message["hardware_id"]] = response
-            self._write_json_bridge_file()
-        return code
+        if self.bridges is not None and json_message["hardware_id"] not in self.bridges:
+            response, code = api_client.register()
+            if code:
+                if self.bridges is None:
+                    self.bridges = dict()
+                self.bridges[json_message["hardware_id"]] = response
+                self._write_json_bridge_file()
+            return code
+        else:
+            return True
 
     def _read_json_bridge_file(self):
         if os.path.isfile(self.home + "/.reactor/hue-bridges.json"):
