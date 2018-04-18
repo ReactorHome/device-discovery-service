@@ -84,8 +84,8 @@ class MqttClient:
         #         self.message_handlers[1]("", json_dict["host"])
         # else:
         device_address = self.get_device_address(json_dict)
-        self._logger.info("Device Address: " + device_address)
         if device_address is not None:
+            self._logger.info("Device Address: " + device_address)
             self.message_handlers[json_dict['type']](device_address, json_dict['device'])
             #print(msg.topic + " " + msg.payload.decode("utf-8"))
 
