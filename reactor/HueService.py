@@ -11,6 +11,8 @@ class HueService:
     def __init__(self):
         self.home = str(Path.home())
         self._logger = logging.getLogger("HueService")
+        self._logger.info(self.home)
+        self._logger.info(os.getlogin())
         self.bridges = None
         self._read_json_bridge_file()
         self.keys_to_remove = ["id", "type", "hardware_id", "connected", "name", "manufacturer", "connection_address", "model", "supports_color", "internal_id"]
