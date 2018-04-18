@@ -14,7 +14,7 @@ class HueService:
         self._logger = logging.getLogger("HueService")
         self._logger.info(self.home)
         self._logger.info(getpass.getuser())
-        self._logger.info(os.environ['HOME'])
+        self._logger.info(os.environ['REACTOR'])
         self.bridges = None
         self._read_json_bridge_file()
         self.keys_to_remove = ["id", "type", "hardware_id", "connected", "name", "manufacturer", "connection_address", "model", "supports_color", "internal_id"]
