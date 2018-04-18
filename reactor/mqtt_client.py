@@ -17,8 +17,8 @@ else:
 
 
 class MqttClient:
-    #hardware_id = netifaces.ifaddresses(addr)[netifaces.AF_LINK][0]["addr"]
-    hardware_id = "b8:27:eb:a7:c2:3e"
+    hardware_id = netifaces.ifaddresses(addr)[netifaces.AF_LINK][0]["addr"]
+    #hardware_id = "b8:27:eb:a7:c2:3e"
 
     def __init__(self, hs):
         self.client = mqtt.Client(transport="tcp")

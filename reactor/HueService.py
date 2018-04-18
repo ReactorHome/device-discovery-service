@@ -13,11 +13,18 @@ class HueService:
         self._logger = logging.getLogger("HueService")
         self.bridges = None
         self._read_json_bridge_file()
+        self.keys_to_remove = ["id", "type", "hardware_id", "connected", "name", "manufacturer", "connection_address", "model", "supports_color", "internal_id"]
 
     def handle(self, bridge_ip, json_message):
         self._logger.info("Handling mqtt message")
         self._logger.debug(json_message)
         api_client = HueApiClient(bridge_ip, "reactor-home", None)
+        internal_id = json_message["internal_id"]
+        for key in json_message:
+            if key in self.keys_to_remove:
+                del json_message[key]
+        json_response = api_client.update_light_state(internal_id, json_message)
+        self._logger.info("Update light response: " + json.dumps(json_message))
 
     def register_bridge(self, bridge_ip, json_message):
         self._logger.info("Registering hubs")
