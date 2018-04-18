@@ -67,7 +67,7 @@ class DeviceDiscovery(Thread):
             if 1 in _dev_dict:
                 for serial, host in _dev_dict[1].items():
                     if self.hue_service.bridge_registered(serial):
-                        lights = self.hue_service.get_lights(serial, host)
+                        lights = self.hue_service.get_lights(serial, "http://"+host)
                         found_devices |= set(lights)
                         for light in lights:
                             _dev_dict[2][light.hardware_id] = host
