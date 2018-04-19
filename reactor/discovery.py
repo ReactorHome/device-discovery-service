@@ -46,13 +46,15 @@ class DeviceDiscovery(Thread):
 
             #_dev_dict[1] = dict()
             if "philips_hue" in devices:
+                if 1 not in self.dev_dict:
+                    self.dev_dict[1] = dict()
                 device_info = netdis.get_info("philips_hue")
                 for device in device_info:
                     # if self.hue_service.bridge_registered(device["serial"]):
                     #     lights = self.hue_service.get_lights(device["serial"], "http://"+device["host"])
                     #     found_devices |= set(lights)
                     #if 1 not in _dev_dict:
-                    _dev_dict[1][device["serial"]] = device["host"]
+                    self.dev_dict[1][device["serial"]] = device["host"]
                     _bridge_names[device["serial"]] = device["name"]
             netdis.stop()
 
@@ -64,8 +66,8 @@ class DeviceDiscovery(Thread):
                 _dev_dict[0][device.mac] = device.ip_address
 
             _dev_dict[2] = dict()
-            if 1 in _dev_dict:
-                for serial, host in _dev_dict[1].items():
+            if 1 in self.dev_dict:
+                for serial, host in self.dev_dict[1].items():
                     if self.hue_service.bridge_registered(serial):
                         lights = self.hue_service.get_lights(serial, "http://"+host)
                         found_devices |= set(lights)
@@ -80,8 +82,6 @@ class DeviceDiscovery(Thread):
                     found_devices.add(Outlet(outlet.get_sysinfo(), True, outlet.ip_address))
 
             new_connections = found_devices.difference(self.old_devices)
-            self._logger.info("New devices: %s" % json.dumps([ob.__dict__ for ob in list(new_connections)]))
-
             disconnections = self.old_devices.difference(found_devices)
 
             for dev in disconnections:
@@ -89,9 +89,19 @@ class DeviceDiscovery(Thread):
                     dev.connected = False
                     new_connections.add(dev)
 
-            self._logger.info("Disconnected devices: %s" % json.dumps([ob.__dict__ for ob in list(disconnections)]))
+            #self._logger.info("Disconnected devices: %s" % json.dumps([ob.__dict__ for ob in list(disconnections)]))
+            self._logger.info("Device changes: %s" % json.dumps([ob.__dict__ for ob in list(new_connections)]))
             self.old_devices = found_devices.copy()
-            self.dev_dict = _dev_dict.copy()
+            if 0 in _dev_dict:
+                self.dev_dict[0] = _dev_dict[0].copy()
+            else:
+                self.dev_dict[0] = dict()
+
+            if 2 in _dev_dict:
+                self.dev_dict[2] = _dev_dict[2].copy()
+            else:
+                self.dev_dict[2] = dict()
+            #self.dev_dict = _dev_dict.copy()
 
             if len(new_connections) > 0 or len(disconnections) > 0:
                 # message_body = json.dumps({"type": "device_connection",
@@ -115,4 +125,4 @@ class DeviceDiscovery(Thread):
                 })
                 self.mqtt_client.publish("cloud_messaging", message_body)
 
-            self._stop_event.wait(15)
+            self._stop_event.wait(5)
