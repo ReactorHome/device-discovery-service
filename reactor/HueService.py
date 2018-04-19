@@ -18,6 +18,7 @@ class HueService:
         self.bridges = None
         self._read_json_bridge_file()
         self.keys_to_remove = ["id", "type", "hardware_id", "connected", "name", "manufacturer", "connection_address", "model", "supports_color", "internal_id"]
+        self.keys_to_transform = {"brightness": "bri"}
 
     def handle(self, bridge_ip, json_message):
         self._logger.info("Handling mqtt message")
@@ -27,8 +28,11 @@ class HueService:
         for key in json_message.copy():
             if key in self.keys_to_remove:
                 del json_message[key]
+            if key in self.keys_to_transform:
+                json_message[self.keys_to_transform[key]] = json_message[key]
+                del json_message[key]
         json_response = api_client.update_light_state(str(internal_id), json_message)
-        self._logger.info("Update light response: " + json.dumps(json_message))
+        self._logger.info("Update light response: " + json.dumps(json_response))
 
     def register_bridge(self, bridge_ip, json_message):
         self._logger.info("Registering hubs")
