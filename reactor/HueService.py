@@ -24,7 +24,7 @@ class HueService:
         self._logger.debug(json_message)
         api_client = HueApiClient(bridge_ip, "reactor-home", None)
         internal_id = json_message["internal_id"]
-        for key in json_message:
+        for key in json_message.copy():
             if key in self.keys_to_remove:
                 del json_message[key]
         json_response = api_client.update_light_state(internal_id, json_message)

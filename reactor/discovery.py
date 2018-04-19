@@ -44,7 +44,7 @@ class DeviceDiscovery(Thread):
             discovered_devices = netdis.discover()
             devices = [a for a in discovered_devices if a in filter_set]
 
-            _dev_dict[1] = dict()
+            #_dev_dict[1] = dict()
             if "philips_hue" in devices:
                 device_info = netdis.get_info("philips_hue")
                 for device in device_info:
@@ -115,4 +115,4 @@ class DeviceDiscovery(Thread):
                 })
                 self.mqtt_client.publish("cloud_messaging", message_body)
 
-            self._stop_event.wait(5)
+            self._stop_event.wait(15)
